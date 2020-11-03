@@ -1,0 +1,84 @@
+@import '~antd/es/style/themes/default.less';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+// 兼容IE11
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+  body .ant-design-pro > .ant-layout {
+    min-height: 100vh;
+  }
+}
+
+.upload-img-cls{
+  width: 160px;
+  background-color: #fff;
+}
+
+.image-upload-cls{
+  .ant-upload.ant-upload-select-picture-card{
+    width: 200px;
+    height: 248px;
+    margin: 0px;
+  }
+}
+.upload-iamge-cls{
+  //width: 170px;
+  display: inline-block;
+  margin: 20px !important;
+  float: left;
+  .upload-btn-cls{
+    display: flex;
+    justify-content: space-between;
+    .ant-btn-dashed{
+      width: 50%;
+    }
+  }
+}
+.analyse-btn{
+  float: left;
+  margin-top: 18%;
+}
