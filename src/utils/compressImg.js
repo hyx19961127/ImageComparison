@@ -7,7 +7,7 @@ const maxColorNumber = 256;
  * 获取 图片数据
  * @return {Promise}
  */
-export function compressImage(imageSrc,imgWid) {
+export function compressImage(imageSrc,imgWid = imageWidth) {
     if (!imageSrc){
         return
     }
@@ -68,10 +68,29 @@ export function createNewImage(imageData,width = 200) {
 
 /**
  * @param {data}
+ * 创建一个新的图片
+ * @return {string}
+ */
+export function createNewImageSrc(imageData,width = 200) {
+  let canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = width;
+
+  let ctx = canvas.getContext('2d');
+  let wid = width ? width : Math.sqrt(imageData.length/4);
+  let image = ctx.createImageData(wid,wid);
+  imageData.forEach((ele,index)=>{
+    image.data[index] = ele;
+  })
+  ctx.putImageData(image,0,0)
+  return canvas.toDataURL('image/png');
+}
+/**
+ * @param {data}
  * 创建一个灰色图片
  * @return {Image}
  */
-export function createGrayImage(imageData,threshold = 0,width = 0) {
+export function createGrayImage(imageData,threshold = 0,width = 0,backData = false) {
     let newData = new Array(imageData.length)
     for (let i = 0; i < imageData.length; i += 4) {
         let gray = ~~((imageData[i] + imageData[i + 1] + imageData[i + 2]) / 3)
@@ -84,6 +103,9 @@ export function createGrayImage(imageData,threshold = 0,width = 0) {
         newData[i + 2] = gray;//蓝色
 
         newData[i + 3] = 255;//透明度
+    }
+    if (backData){
+      return newData;
     }
     if (width){
         // addImageToDom(createNewImage(newData,width),imageWidth);
@@ -324,25 +346,3 @@ export async function getContentAnalyse(url1,url2){
   return compareContResult
 }
 
-async function getDifferentResult(){
-    //hash方法
-    // let res1 = await getImageData('./testImg.jpg',200);
-    // let res2 = await getImageData('./testImg_2.jpg',200);
-    // let compareResult = caculateHanMimgDistance(res1,res2);
-    // console.log('compressResult: ' + compareResult)
-    //
-    // //颜色特征
-    // let resColor1 = await getImageColorInfo('./testImg.jpg',200);
-    // let resColor2 = await getImageColorInfo('./testImg_2.jpg',200);
-    // let colorResult = calculateCosResult(resColor1,resColor2)
-    // console.log('colorFeatureResult: ' + colorResult);
-    //
-    // //内容分析法
-    // let resContent1 = await analyseImageData('./testImg.jpg',200);
-    // let resContent2 = await analyseImageData('./testImg_2.jpg',200);
-    // let compareContResult = caculateHanMimgDistance(resContent1,resContent2);
-    // console.log('compressContentResult: ' + compareContResult)
-
-}
-
-getDifferentResult();

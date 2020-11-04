@@ -4,8 +4,10 @@ import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import {Card, Alert, Button, Table, Spin} from "antd";
 import {headerInfoText} from "@/utils/common";
 import {SyncOutlined} from "@ant-design/icons";
-import {getColorResult, getContentAnalyse, getHashData, getHashResult} from "@/utils/compressImg";
+import {getColorResult, getContentAnalyse, getHashResult} from "@/utils/compressImg";
 import {comparisonResultColumns} from "@/pages/ImageComparisonResult/ImageComparisonResult";
+import DemoRadar from "@/components/DemoRadar";
+import {isNotEmptyArray} from "@/utils/utils";
 
 class ImageComparisonResult extends React.Component {
 
@@ -19,7 +21,12 @@ class ImageComparisonResult extends React.Component {
         colorResult: null,
         hashResult: null
       }
-    ]
+    ],
+    comparisonChartsRes:[{title:"ddd",value:0}],
+  }
+
+  constructor (props) {
+    super(props);
   }
 
   setLoading = (loading) => {
@@ -47,19 +54,40 @@ class ImageComparisonResult extends React.Component {
 
     Promise.all([hashResult, colorResult, contentResult]).then(res => {
       this.setLoading(false);
-      this.setState({
-        comparisonResult: [{
-          contentResult: res[2],
-          colorResult: res[1],
-          hashResult: res[0]
-        }]
-      })
+      this.setComparisonResult(res);
     });
+  }
+
+  setComparisonResult = (res)=>{
+    if (!isNotEmptyArray(res)){
+      return;
+    }
+    let [hashResult,colorResult,contentResult] = res;
+    let titleInfo = [...comparisonResultColumns];
+
+    let result = {
+      contentResult: contentResult || '',
+      colorResult: colorResult || '',
+      hashResult: hashResult || ''
+    };
+
+    titleInfo.forEach(ele=>{
+      if (result[ele.key]){
+        ele.value = result[ele.key];
+      }else {
+        ele.value = 0;
+      }
+    })
+
+    this.setState({
+      comparisonResult: [result],
+      comparisonChartsRes:titleInfo,
+    })
   }
 
   render () {
 
-    let {imageOne, imageTwo, comparisonResult} = this.state;
+    let {imageOne, imageTwo, comparisonResult, comparisonChartsRes} = this.state;
 
     return (
       <PageHeaderWrapper>
@@ -72,10 +100,13 @@ class ImageComparisonResult extends React.Component {
               <Button className="analyse-btn" onClick={this.anaylseImageData} disabled={!(imageOne && imageTwo)}
                       type="primary" icon={<SyncOutlined/>}>开始分析</Button>
             </Card.Grid>
-            <Card.Grid hoverable={false} style={{width:"50%"}}>
+            <Card.Grid hoverable={false} className="anaylse-result-cls">
+              <h2 className="table-result-title">分析结果</h2>
               <Table pagination={false} columns={comparisonResultColumns} dataSource={comparisonResult}/>
             </Card.Grid>
-            <Card.Grid hoverable={false} style={{width:"50%"}}>
+            <Card.Grid hoverable={false} className="anaylse-result-cls">
+              <h2 className="table-result-title">分析图表</h2>
+              <DemoRadar yField="value" xField="title" data={comparisonChartsRes} />
             </Card.Grid>
           </Card>
         </Spin>
